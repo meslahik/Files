@@ -12,7 +12,9 @@
 # show the commands that are run for debugging in /root/setup/setup-node.log
 set -x
 
-USER_HOME=/users/meslahik
+export USER_HOME=/users/meslahik
+echo "User home: "
+echo $USER_HOME
 
 FLAG="/opt/.firstboot"
 SETUPFLAG="/opt/.setup_in_process"
@@ -31,7 +33,7 @@ sudo pip3 install --upgrade conan
 sudo ln -s -f /users/meslahik/.local/bin/conan /usr/bin
 sudo conan profile new default --detect
 sudo conan profile update settings.compiler.libcxx=libstdc++11 default
-DEBIAN_FRONTEND=noninteractive sudo apt-get update && sudo apt-get -y install vim tmux git memcached libevent-dev libhugetlbfs-dev libgtest-dev libnuma-dev numactl libgflags-dev ibverbs-utils rdmacm-utils
+DEBIAN_FRONTEND=noninteractive sudo apt-get update && sudo apt-get -y install vim tmux git maven memcached libevent-dev libhugetlbfs-dev libgtest-dev libnuma-dev numactl librdmacm-dev libgflags-dev ibverbs-utils rdmacm-utils
 cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo make install
 
 # install oh-my-zsh
@@ -104,10 +106,16 @@ sudo mkdir $USER_HOME/apps/SharedMemorySSMR
 # sudo  update-java-alternatives --set /usr/lib/jvm/java-1.8.0-openjdk-amd64
 
 # install java
-sudo mkdir java
-cd java
-wget https://www.dropbox.com/s/qrgb17l734b3whn/OpenJDK11U-jdk_x64_linux_hotspot_11.0.11_9.tar.gz
-export JAVA_HOME=$USER_HOME/java/jdk-11.0.11+9
+sudo mkdir $USER_HOME/java
+cd $USER_HOME/java
+sudo wget https://www.dropbox.com/s/qrgb17l734b3whn/OpenJDK11U-jdk_x64_linux_hotspot_11.0.11_9.tar.gz
+sudo tar -xzvf OpenJDK11U-jdk_x64_linux_hotspot_11.0.11_9.tar.gz
+
+export JAVA_HOME=${USER_HOME}/java/jdk-11.0.11+9
+printf "%s\n" "export JAVA_HOME=${USER_HOME}/java/jdk-11.0.11+9" >> ${USER_HOME}/.bashrc
+export PATH=${PATH}:${JAVA_HOME}/bin
+printf "%s\n" "export PATH=${PATH}:${JAVA_HOME}/bin" >> ${USER_HOME}/.bashrc
+cat ${USER_HOME}/.bashrc
 
 cd $USER_HOME/apps/SharedMemorySSMR
 sudo git clone https://github.com/zrlio/disni
@@ -116,7 +124,7 @@ cd disni
 sudo mvn -DskipTests install
 cd libdisni
 sudo ./autoprepare.sh
-sudo ./configure --with-jdk=$USER_HOME/java/jdk-11.0.11+9
+sudo ./configure --with-jdk=$JAVA_HOME
 sudo make
 sudo make install
 
