@@ -33,7 +33,7 @@ sudo pip3 install --upgrade conan
 sudo ln -s -f /users/meslahik/.local/bin/conan /usr/bin
 sudo conan profile new default --detect
 sudo conan profile update settings.compiler.libcxx=libstdc++11 default
-DEBIAN_FRONTEND=noninteractive sudo apt-get update && sudo apt-get -y install vim tmux git maven memcached libevent-dev libhugetlbfs-dev libgtest-dev libnuma-dev numactl librdmacm-dev libgflags-dev ibverbs-utils rdmacm-utils
+DEBIAN_FRONTEND=noninteractive sudo apt-get update && sudo apt-get -y install vim tmux git htop maven memcached libevent-dev libhugetlbfs-dev libgtest-dev libnuma-dev numactl librdmacm-dev libgflags-dev ibverbs-utils rdmacm-utils
 cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo make install
 
 # install oh-my-zsh
@@ -111,6 +111,7 @@ cd $USER_HOME/java
 sudo wget https://www.dropbox.com/s/qrgb17l734b3whn/OpenJDK11U-jdk_x64_linux_hotspot_11.0.11_9.tar.gz
 sudo tar -xzvf OpenJDK11U-jdk_x64_linux_hotspot_11.0.11_9.tar.gz
 
+export USER_HOME=/users/meslahik
 export JAVA_HOME=${USER_HOME}/java/jdk-11.0.11+9
 printf "%s\n" "export JAVA_HOME=${USER_HOME}/java/jdk-11.0.11+9" >> ${USER_HOME}/.bashrc
 export PATH=${PATH}:${JAVA_HOME}/bin
@@ -141,6 +142,9 @@ sudo make install
 # echo "export LD_LIBRARY_PATH=$HOME/apps/dory/crash-consensus/experiments/exported:$LD_LIBRARY_PATH" >> ~/.bashrc
 
 sudo chown -R meslahik:scalingsmr-PG0 $USER_HOME
+
+# create output folder
+sudo mkdir $USER_HOME/output
 
 if [[ "$REBOOT" == "yes" ]]; then
   # enact the change to the locked memory limits
